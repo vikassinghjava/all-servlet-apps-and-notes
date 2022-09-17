@@ -1,0 +1,642 @@
+1. javax.servlet.Servlet  interface-> provides the life cycle methods to create the
+ dynamic web page.
+
+init()->is used to initilise the reseource of server side. and it will invoke 
+only once just after first request.
+
+      public   void    init(ServletConfig cfg)
+
+
+service()->is used to process the user request and generate the dynamic 
+web page to the client. service method will invoke after each request
+of client.
+
+public void service(ServletRequest req,ServletResponse res) 
+                                throws ServletException, IOException
+
+destroy()->it will invoke only once just before undeployment(unistall) of web
+ application from server.
+  purpose-> to perform the cleanup operation before undeployement of   
+       web application.
+Note-> init(),service() and destroy() will participate only in 
+      life cylce of servlet.
+
+getServletInfo()-> use to describe the servlet.
+  public String getServletInfo();
+
+getServletConfig()-> return an object of Servletconfig Interface.
+public ServletConfig getServletConfig();
+
+Note-> getServletInfo(),getServletConfig() will not participate  in 
+      life cylce of servlet.
+
+
+init()
+service()
+destroy()
+getServletInfo()
+getServletConfig()
+
+Dis Advantage of Servlet interface ->
+
+1. It will not support any protocol thats why its not secured.
+
+
+2. javax.servlet.GenericServlet ->
+
+GenericServlet(class)<------implements ------Servlet(interface)
+
+Advan-> It will support any type of protocol such as http,smtp,ftp etc.
+
+DisAd->Appn developer have to write the code of protocol so its very much
+diffiult to the application developer.
+
+GenericServlet(class)<------implements ------
+Servlet(interface),ServletConfig(interface),Serilizable(interface)
+
+3. javax.servlet.http.HttpServlet->
+
+  HttpServlet(class)<--------extends----GenericServlet(class)
+
+  Advantage->
+1. It will support bydefault HttpProtocol and no need to provide
+the implementation of Http Protocol code.
+
+public void doGet(HttpServletRequest req,HttpServletReponse res)
+                                           throws ServletException, IOException
+public void doPost(HttpServletRequest req,HttpServletReponse res)
+                                           throws ServletException, IOException
+Difference b/w get and post method HttpPrptocol
+get method->
+  1.  Data will be display into url bar.
+  2.  It will acrry data into <head> tag
+  3. it can carry only limited amount of data. (255 chracters)
+  4. its idempotent
+
+post method->
+  1.  Data will not be display into url bar.
+  2.  It will carry unlimted amount of  data into <body> tag
+  3. It can carry unlimted amount of  data
+  4.  Its not idempotent
+
+1. 
+class  WelcomeServlet implements Servlet
+{
+}
+ 
+2. 
+class  WelcomeServlet extends GenericServlet
+{
+} 
+
+3. 
+class  WelcomeServlet extends HttpServletServlet
+{
+} 
+
+1. Directory structure of Servlet WebApplication
+Ques-Where we will deploy(install) the web application.
+Ans->Server->
+1. WebServer
+2. ApplicationServer
+
+
+WebServer-> are those server which contains only web container. 
+web container is like run time environment (such as jre). Web container
+provide the runtime enviromment only for  servlet and jsp.
+E.g. -> Apache tomcat server.
+WebServer=WebContainer
+
+Application Server-Contains Web container and Ejb container. Ejb container
+is also a run time enviromenet for EJB(Enterprose java Bean).
+Ejb container provide the services for Servlet ,jsp,
+Ejb,Jbdc,Soap,Rest,XML,UDDI etc i.e Application server is a fully
+implementation of j2ee services.
+
+ApplicationServer=WebContainer+Ejb container. 
+
+E.g. 
+1.  Weblogic Server
+2. Glassfish Server
+3. JBoss server
+4. Oracle server
+etc.
+
+Apache tomcat Server->
+1. install
+   user name
+   password
+
+2.monitor tomcat
+3.Select the  icon of servlet and start the service
+4.http://localhost:8888/manager/html
+2.C:\Program Files\Apache Software Foundation\Tomcat 7.0\webapps
+   Paste ur web application 
+
+Server : Web Deployment
+-------------------------------
+1. Hot Deployment
+2. Cold Deployment
+
+1. Hot Deployment-> to put the web application into staging folder of
+ Web server is known as Hot Deployment.
+
+E.g. .C:\Program Files\Apache Software Foundation\Tomcat 7.0\webapps
+         Paste ur web application 
+2. Cold Deployment
+-------------------------------
+ Install using User interface of WebServer.
+1.You have to create the War file.    
+     jar -cvf  mywar.war  *.*
+
+2.Select the option of  User interface of WebServer .
+   
+Weblogic Server:  is an application server.
+
+   ????????
+Weblogic server 10 hsould be.....
+
+
+javax.servlet.ServletResonse->method
+
+setContentType()->return the output into given MIME type to the client.
+public void setContentType(String mimetype)
+
+text/html---->Browser
+application/pdf---->PDF
+application/msword---->msword 
+application/vnd.msexcel---->Excel sheet
+
+E.g
+
+res.setContentType("applcation/msword");
+res.setContentType("applcation/vnd.mscxcel");
+
+
+Database connectivity to the servlet->
+
+Ques-> How to mix up the doGet() andPost() method
+1. Wap Regiser and Sign the Employee using Servlet Databse connectivity
+2. Wap to perform the curd operation using Servlet.
+   
+
+Problem:
+1.If user name and password is invalid  then user have to go in back page
+To solve this problem we have to use RequestDispatcher interface.
+
+RequestDispatcher-> is used to include the content of html page/jsp page with the 
+output.
+Method of RequestDispatcher->
+include();->public void include(ServletRequest req,Servlet response)throws ServletException,IOException
+forward();->public void forward(ServletRequest req,Servlet response)throws ServletException,IOException
+
+E.g.->
+ out.println("invalid user name or password!!!");
+RequestDispatcher rd=request.getRequestDispatcher("index.html");
+	               rd.include(req,resp); 	
+
+ServletResponse->
+sendRedirect()-> forward the request to given url of resource.
+public void sendRedirect(String resourceurl);
+Ad.
+1.We can forward the request to the current Web Application.
+2.We can forward the request to the Another Web Application which is 
+installed into  current Server.
+3.We can forward the request to the other Web Application 
+which is installed into another Server.
+
+
+sendRedirect()->it will put the url into web browser url bar.
+
+----------------------------------------------------------------------------
+Problem->
+1.Database Connectivity:  Servlet
+   a. LoginServlet(Each page Contains the DB. Connetivity code Driver,URL,USER,Password)
+   b. SignUpServlet(Each page Contains the DB. Connetivity code Driver,URL,USER,Password)
+   c. UsersServlet(Each page Contains the DB. Connetivity code Driver,URL,USER,Password)
+
+Database:   1. mysql--- X
+                    2.Oracle---   
+If We want to Migrate from one Database to another Database then
+we have to modify the each page with mysql to 
+oracle database connectivity code then you have to again recompile
+ and again you have to redeploy on the server.
+
+Soln->We have to code on the fly using propeties file/xml/annotation.
+Important Question->
+To apply the annotaion  for  on the fly code we have to use ServletConfig->
+
+ServletConfig-> if we do not want to hard code for servlet then we can 
+can provide the configuration to the servlet using ServletConfig object via
+xml or annotaion.
+Note->Per servlet  one ServletConfig Object is created.
+1.               ServletConfig cfg;
+	public void init(ServletConfig config) throws ServletException 
+	{
+	 cfg=config;
+	}
+
+2.
+ServletConfig cfg=getServletConfig();
+
+Ques->How to code on the fly using Annotaion.
+
+///////////////////////////////////////////////////////////
+ServletContext->If  we do not want to hard code at application 
+level then we have initialise the information using ServletContext.
+Per application one ServletContext Object is created.
+
+How to get the object of ServletContext:-
+ServletContext ctx=getServletContext();
+
+Method of ServletContext interface:-
+public String getInitParameter(String parameterName);
+
+Scopes->
+RequestScope(ServletRequest)->If Server response to the Client then 
+ServletRequest and Servlet Response object will be destroy.
+Use->
+1.After response every thing should be delete from request object.
+
+SessionScope(HttpSession)->
+If client logout the web application then the 
+we can not use the data of HttpSession object.
+USe->1. Session tracking
+ 
+ApplicationScope(ServletContext)->
+if Application is undeployed  from server 
+then ServletContextData will be destroy.
+Use->
+1.To count the no of click, views
+2.To count the number of likes,comments etc.
+
+How To set the data into Servlet, Session and ApplicationScope:-
+setAttribute(); public void setAttribute(String name, object Value)
+getAttribute(); public Object setAttribute(String name)
+removeAttribute(); public void removeAttribute(String name)
+
+SessionScope->
+-----------------
+
+StateManagement or SessionTracking->
+
+Definition: To save the state(value of properties) of user for a particular time
+of interval is knwon as Session Tracking or StateManagement.
+
+E.g. 1. To save the student states(value of properties) only for four years
+of B.Tech  college session.
+
+Question: Why State Management or SessionTracking ?
+
+Http protocol is Stateless Protocol , just after response ,
+request data will be destroy from server side so we need to 
+save the state of user for a particular time of interval 
+until user transaction is not completed.
+
+To manage the session tracking  we have to use 4 types of  techniques->
+1.  Cookies
+2.  Hidden Text Field
+3.  URL Rewriting or QueryString
+4.  HttpSession
+Cookies-> is one of the way is used to manage the session of user at server 
+side.
+javax.servlet.http.Cookie-> class is used to manage the Cookie.
+
+//How to create the Cookie classObject
+Cookie ck=new Cookie("name","vikas"); //id=101
+name=key
+vikas=value
+//how to send the Cookie into browser with response.
+response.addCookie(ck);
+
+//How to get the data from Cookie->
+
+Cookie ck[]=request.getCookies();
+ String name=ck[0].getValue();
+
+Types of Cookie:
+--------------------
+1. Persistent(Saved) Cookie
+2. Non Persistent(Not Saved) Cookie
+
+1. Persistent Cookie:-> if cookie is  availabe after closing the broswer
+ -------------------------
+after user transcation completion is known as Persistent cookie.
+
+2. Non Persistent Cookie:-> if cookie is  not availabe after closing the broswer
+ -------------------------
+after user transcation completion is known as Non Persistent cookie.
+
+Note->Bydefault Cookie is NonPersistent in Browser.
+
+
+DisAdvtage->
+1. If cookie is disabled into browser the we can not save the sate of user 
+using cookie and your Webapplication will not work.
+For E.g: Gmail
+
+2. Cookie will store only textual information i.e. string data
+
+3. Cookie is not Secured because we can access the information of user
+
+2.Hidden TextField- is used to save the sate of user into
+WebPage using Hidden text Field 
+
+For E.g. :
+
+<form>
+    <input type="hidden"  name="username" value="vikas"><br>
+   <input type="hidden"  name="userpassword" value="vikas"><br>
+   <input type="submit" value="submit">	
+</form>
+Advatage->
+1. If cookie is disabled into browser, Hidden text filed will work properly
+
+DisAdvantage->
+1. In Each page We have to create the form to save the state of user, it
+will create the overhead of developer.
+
+2. hidden text field will save only textual information  ,it can not
+store any object
+
+3. Its unsecured bcoz user state will be save into browser.
+
+
+3. Query String or URL Rewriting: 
+   With the URL of Page we can save the state of user
+  For E.g:->
+    
+ <a href='WelcomeServlet?username=vikas'> Click1 </a>
+ <a href='Welcome.html?username=vikas&password=pass'> Click2 </a>
+<a href='Welcome.jsp?username=vikas&address=jaipur'> Click3 </a>
+
+Advantage->
+   1. No need to create the form in each page to save the satate of user.
+
+DisAdvanatge->
+   1. It will store only textual(String) information only.
+   2. It will work with only get method.
+    3 Its not secured.
+
+HttpSession->is used to save the sate of user at server side.
+HttpSession object created for each user with uniquse session id.
+ 
+HttpSessionObject:
+HttpSession sesssion=request.getSession();
+
+Save the value with in HttpSession:
+
+setAttribute(): 
+public void setAtribute(String name,Object Value)
+
+getAttribute():
+public Object getAtribute(String name)
+
+removeAttribute():
+public void removeAtribute(String name)
+
+invalidate()->is used to remove(logout) the object from server
+public void invalidate();
+
+setMaxInactiveInterval():->
+is used to set maximum time for user ,after that automatically
+it wil destroy the object.
+
+-----------------------------------------------------------------------
+Event Handelling->
+Event:- change the state of any object is known as event.
+
+
+Filter-> use to filter the request and response.
+
+USe-> 1. Validation.
+            2. To maintain the log. etc
+
+javax.servlet.Filter interface-> provide the life cycle method like servlet.
+
+1. init()
+2. doFilter()
+3. destroy()
+
+1.init()->invoke only once just after first request. and used to initialise the
+  resource of filter.
+  public void init(FilterConfig fg);
+
+2.doFilter()-> is used to filter the request ,response and forward the
+request to next servlet.
+
+public void doFilter(ServletRequest req,ServletResponse respponse,FilterChain cfg ) 
+throws ServletException,IOException
+
+3. destroy()->invoke just only before undeployment(uninstall)
+ of web applicaton from server, and is used to perform the cleanup
+operaton on ther server side before undeployment of web-
+application.
+
+     public void destroy()
+
+Ques->Diff b/w Filter and Servlet.
+Ans->?
+
+1. Wap to validate the username and password using Filter.
+2. Wap to count the no of user request of Servlet
+3. Wap to create the log of user at server side using Filter interface.
+4. Wap to put more than one filter.
+5. Wap to provide the FilterConfig interface Configuration like 
+ServletConfig.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
